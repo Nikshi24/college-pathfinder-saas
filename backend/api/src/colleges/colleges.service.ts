@@ -6,18 +6,18 @@ export class CollegesService {
 
   prisma = new PrismaClient();
 
-  // GET /colleges with filtering + pagination
   async findAll(query: any) {
 
-    const page = Number(query.page) || 1;
-    const limit = Number(query.limit) || 10;
-
-    const skip = (page - 1) * limit;
+    const page = query.page ? Number(query.page) : 1;
+    const limit = query.limit ? Number(query.limit) : 20;
 
     const filters: any = {};
 
     if (query.location) {
-      filters.location = query.location;
+      filters.location = {
+        contains: query.location,
+        mode: 'insensitive'
+      };
     }
 
     if (query.maxFees) {
@@ -26,39 +26,73 @@ export class CollegesService {
       };
     }
 
-    return this.prisma.college.findMany({
+    if (query.ranking) {
+      filters.ranking = {
+        lte: Number(query.ranking)
+      };
+    }
+
+    const colleges = await this.prisma.college.findMany({
       where: filters,
-      skip: skip,
+      skip: (page - 1) * limit,
       take: limit
     });
+
+    const total = await this.prisma.college.count({
+      where: filters
+    });
+
+    return {
+      page,
+      limit,
+      total,
+      data: colleges
+    };
   }
 
-  // GET /colleges/:id
   async findOne(id: number) {
+
     return this.prisma.college.findUnique({
       where: { id }
     });
+
   }
 
-  // POST /colleges
   async create(data: any) {
+
     return this.prisma.college.create({
       data
     });
+
   }
 
-  // PATCH /colleges/:id
   async update(id: number, data: any) {
+
     return this.prisma.college.update({
       where: { id },
       data
     });
+
   }
 
-  // DELETE /colleges/:id
   async remove(id: number) {
+
     return this.prisma.college.delete({
       where: { id }
     });
+
   }
+
+  async compare(ids: number[]) {
+
+    return this.prisma.college.findMany({
+      where: {
+        id: {
+          in: ids
+        }
+      }
+    });
+
+  }
+
 }

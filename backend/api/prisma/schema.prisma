@@ -25,12 +25,17 @@ model College {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
+  id                Int             @id @default(autoincrement())
+  email             String          @unique
+  password          String
+  createdAt         DateTime        @default(now())
 
-  savedColleges SavedCollege[]
+  preferredLocation String?
+  preferredCourse   String?
+  maxFees           Int?
+  targetRanking     Int?
+
+  savedColleges     SavedCollege[]
 }
 
 model SavedCollege {

@@ -20,26 +20,35 @@ export class CollegesController {
 
   constructor(private collegesService: CollegesService) {}
 
-  // Public: GET /colleges
+  // GET /colleges with filters + pagination
   @Get()
   async findAll(@Query() query: any) {
     return this.collegesService.findAll(query);
   }
 
-  // Public: GET /colleges/:id
+  // GET /colleges/compare?ids=1,2,3
+  @Get('compare')
+  async compare(@Query('ids') ids: string) {
+
+    const idArray = ids.split(',').map(id => Number(id));
+
+    return this.collegesService.compare(idArray);
+  }
+
+  // GET /colleges/:id
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.collegesService.findOne(id);
   }
 
-  // Protected: POST /colleges
+  // POST /colleges
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() data: CreateCollegeDto) {
     return this.collegesService.create(data);
   }
 
-  // Protected: PATCH /colleges/:id
+  // PATCH /colleges/:id
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async update(
@@ -49,7 +58,7 @@ export class CollegesController {
     return this.collegesService.update(id, data);
   }
 
-  // Protected: DELETE /colleges/:id
+  // DELETE /colleges/:id
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
