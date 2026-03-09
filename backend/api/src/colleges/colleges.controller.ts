@@ -6,6 +6,7 @@ import {
   Delete,
   Body,
   Param,
+  Query,
   ParseIntPipe
 } from '@nestjs/common';
 
@@ -17,10 +18,10 @@ export class CollegesController {
 
   constructor(private collegesService: CollegesService) {}
 
-  // GET /colleges
+  // GET /colleges (with filtering + pagination)
   @Get()
-  async findAll() {
-    return this.collegesService.findAll();
+  async findAll(@Query() query: any) {
+    return this.collegesService.findAll(query);
   }
 
   // GET /colleges/:id
@@ -49,4 +50,5 @@ export class CollegesController {
   async remove(@Param('id', ParseIntPipe) id: number) {
     return this.collegesService.remove(id);
   }
+
 }
