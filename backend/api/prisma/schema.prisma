@@ -20,4 +20,25 @@ model College {
   ranking   Int?
   fees      Int?
   createdAt DateTime @default(now())
+
+  savedByUsers SavedCollege[]
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  savedColleges SavedCollege[]
+}
+
+model SavedCollege {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  collegeId Int
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  college College @relation(fields: [collegeId], references: [id])
 }
