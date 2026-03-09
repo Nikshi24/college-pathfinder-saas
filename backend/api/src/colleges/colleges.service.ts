@@ -22,4 +22,17 @@ export class CollegesService {
     });
   }
 
+  async update(id: number, data: any) {
+    return this.prisma.college.update({
+      where: { id },
+      data
+    });
+  }
+
+  async remove(id: number) {
+    return this.prisma.college.delete({
+      where: { id }
+    });
+  }
+
 }
