@@ -1,15 +1,21 @@
-import { Controller, Get } from '@nestjs/common';
-
+import { Controller, Get, Post, Body } from '@nestjs/common';
+import { CollegesService } from './colleges.service';
+import { CreateCollegeDto } from './dto/create-college.dto';
+import { Param, ParseIntPipe } from '@nestjs/common';
 @Controller('colleges')
 export class CollegesController {
+  constructor(private collegesService: CollegesService) {}
 
   @Get()
-  findAll() {
-    return [
-      { id: 1, name: "IIT Bombay", location: "Mumbai" },
-      { id: 2, name: "IIT Delhi", location: "Delhi" },
-      { id: 3, name: "NIT Trichy", location: "Tamil Nadu" }
-    ];
+  async findAll() {
+    return this.collegesService.findAll();
   }
-
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.collegesService.findOne(id);
+  }
+  @Post()
+  async create(@Body() data: CreateCollegeDto) {
+    return this.collegesService.create(data);
+}
 }
